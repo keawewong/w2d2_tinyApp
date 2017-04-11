@@ -1,0 +1,14 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TinyApp</title>
+</head>
+<body>
+<%- include('partials/_header') %>
+<ul>
+  <% for(i in urls) { %>
+    <li><a href="/urls/<%= i %>"><%= i%> </a>(<%= urls[i] %>)</li>
+  <% } %>
+</ul>
+</body>
+</html>
