@@ -1,3 +1,4 @@
+const RanStr = require('randomstring')
 const Parse = require('body-parser')
 const xp = require('express')
 const app = xp()
@@ -11,7 +12,7 @@ const urlDatabase = {
 };
 
 app.get('/', (req, resp) => {
-  resp.send('Hello!')
+  resp.send(`Hello! This is the random url: ${generateRandomString()}`)
 })
 
 app.get("/urls.json", (req, resp) => {
@@ -19,7 +20,7 @@ app.get("/urls.json", (req, resp) => {
 })
 
 app.get('/urls', (req, resp) => {
-  let templateVars = {urls: urlDatabase}
+  let templateVars = { urls: urlDatabase }
   resp.render('urls_index', templateVars)
 })
 
@@ -28,11 +29,11 @@ app.get('/urls/new', (req, resp) => {
 })
 
 app.get('/urls/:id', (req, resp) => {
-  let templateVars = {shortURL: req.params.id}
+  let templateVars = { shortURL: req.params.id }
   resp.render('urls_show', templateVars)
 })
 
-app.use(Parse.urlencoded({extended: true}))
+app.use(Parse.urlencoded({ extended: true }))
 
 app.post('/urls', (req, resp) => {
   console.log(req.body)
@@ -42,3 +43,7 @@ app.post('/urls', (req, resp) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
 })
+
+function generateRandomString() {
+  return RanStr.generate(6)
+}
