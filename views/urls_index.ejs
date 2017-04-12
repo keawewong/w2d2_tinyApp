@@ -1,14 +1,37 @@
 <html>
+
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <title>TinyApp</title>
 </head>
+
 <body>
-<%- include('partials/_header') %>
-<ul>
-  <% for(i in urls) { %>
-    <li><a href="/urls/<%= i %>"><%= i%> </a>(<%= urls[i] %>)</li>
-  <% } %>
-</ul>
+  <div class="container">
+    <%- include('partials/_header') %>
+
+      <% for(i in urls) { %>
+        <!-- Bootstrap form -->
+        <form class="form-horizonal" action="/urls/<%= i %>/delete" method="POST">
+          <div class="form-group">
+            <div class="col-md-4">
+              <a href="/urls/<%= i %>">
+                <%= i%>
+              </a> <span> <span class="glyphicon glyphicon-arrow-right"></span>
+              <%= urls[i] %>
+                </span>
+            </div>
+
+            <button class="btn btn-default" type="submit" value="submit">
+              Delete <span class="glyphicon glyphicon-trash"></span>
+            </button>
+          </div>
+        </form>
+        <!-- End Bootstrap form -->
+        <% } %>
+  </div>
+  <!-- end Bootstrapcontainer -->
+
 </body>
+
 </html>

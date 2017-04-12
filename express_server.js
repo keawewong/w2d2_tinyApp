@@ -26,6 +26,7 @@ app.get("/urls.json", (req, resp) => {
   resp.json(urlDatabase)
 })
 
+//  route to the index page
 app.get('/urls', (req, resp) => {
   let templateVars = { urls: urlDatabase }
   resp.render('urls_index', templateVars)
@@ -36,16 +37,15 @@ app.get('/urls/new', (req, resp) => {
   resp.render('urls_new')
 })
 
-//route to a short url page
+//route to each short url page
 app.get('/urls/:id', (req, resp) => {
-  temp.shortURL = req.params.id
-  temp.longURL = urlDatabase[req.params.id]
+  getLongURL(req.params.i)
   resp.render('urls_show', temp)
 })
 
 //route to the external long url
 app.get("/u/:shortURL", (req, resp) => {
-  temp.longURL = urlDatabase[temp.shortURL]
+  getLongURL(req.params.i)
   resp.redirect(temp.longURL)
 })
 
@@ -59,10 +59,23 @@ app.post('/urls', (req, resp) => {
   resp.render('urls_show', temp)
 })
 
+// route from the Delete button
+app.post('/urls/:i/delete', (req, resp) => {
+  getLongURL(req.params.i)
+  delete(urlDatabase[temp.shortURL])
+  console.log(urlDatabase)
+})
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
 })
 
 function generateRandomString() {
   return RanStr.generate(6)
+}
+
+function getLongURL(shortURL) {
+  temp.shortURL = shortURL
+  temp.longURL = urlDatabase[temp.shortURL]
+
 }
