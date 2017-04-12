@@ -1,15 +1,32 @@
 <html>
+
 <head>
   <meta charset="UTF-8">
-  <title>TinyApp</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <title>Tiny App</title>
 </head>
-<body>
-<%- include('partials/_header') %>
-<h4>The short url for <%= longURL%> is:</h4>
-    <a href="/u/<%= shortURL%>"> <%= shortURL%></a>
 
-    <% if (warn) {%>
-<h3>Response Code: <%= warn%></h3>
-    <%}%>
+<body>
+  <div class="container">
+
+    <%- include('partials/_header') %>
+
+      <h3 class="col-md-12">Short URL: <%= shortURL%></h3>
+
+      <!-- Bootstrap form -->
+      <form class="form-horizonal" action="/urls/<%= shortURL%>/update" method="POST">
+        <div class="form-group">
+          <div class="col-md-4">
+              <input class="form-control" type="text" name="longURL" value="<%= longURL%>">
+          </div>
+
+          <button class="btn btn-default" type="submit" value="submit">Update</button>
+        </div>
+      </form>
+      <!-- End Bootstrap form -->
+
+  </div>
+  <!-- Bootstrap container -->
 </body>
+
 </html>

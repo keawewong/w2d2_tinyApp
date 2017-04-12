@@ -3,34 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <title>TinyApp</title>
+  <title>Tiny App</title>
 </head>
 
 <body>
   <div class="container">
-    <%- include('partials/_header') %>
 
-      <% for(i in urls) { %>
-        <!-- Bootstrap form -->
+    <div class="row">
+      <%- include('partials/_header') %>
+
+    </div>
+    <% for(i in urls) { %>
+      <!-- Bootstrap form -->
+      <div class="row">
         <form class="form-horizonal" action="/urls/<%= i %>/delete" method="POST">
           <div class="form-group">
             <div class="col-md-4">
-              <a href="/urls/<%= i %>">
+              <a href="<%= urls[i] %>">
                 <%= i%>
-              </a> <span> <span class="glyphicon glyphicon-arrow-right"></span>
+              </a> <span class="glyphicon glyphicon-arrow-right"></span>
               <%= urls[i] %>
-                </span>
             </div>
 
-            <button class="btn btn-default" type="submit" value="submit">
-              Delete <span class="glyphicon glyphicon-trash"></span>
-            </button>
+            <div class="form-group">
+              <div class="col-md-1">
+                <a href="/urls/<%= i %>">Edit</a>
+                <!-- Route to urls_show -->
+              </div>
+              <div class="col-md-1">
+
+                <button class="btn btn-default" type="submit" value="submit">
+                  Delete <span class="glyphicon glyphicon-trash"></span>
+                </button>
+              </div>
+            </div>
           </div>
+          <!-- class="row" -->
+
         </form>
         <!-- End Bootstrap form -->
-        <% } %>
+      </div>
+      <!-- class="row" -->
+      <% } %>
+
   </div>
-  <!-- end Bootstrapcontainer -->
+  <!-- clase= "container" -->
 
 </body>
 
