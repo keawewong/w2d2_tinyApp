@@ -29,7 +29,8 @@ app.get('/urls/new', (req, resp) => {
 })
 
 app.get('/urls/:id', (req, resp) => {
-  let templateVars = { shortURL: req.params.id }
+  let longURL = urlDatabase[req.params.id]
+  let templateVars = { shortURL: req.params.id, longURL: longURL }
   resp.render('urls_show', templateVars)
 })
 
@@ -37,8 +38,11 @@ app.use(Parse.urlencoded({ extended: true }))
 
 app.post('/urls', (req, resp) => {
   let key = generateRandomString()
-  urlDatabase[key] = req.body.longURL
-  resp.json(urlDatabase)
+  let longURL = req.body.longURL
+  urlDatabase[key] = longURL
+  let templateVars = {shortURL: key, longURL: longURL}
+  resp.render('urls_show', templateVars)
+  // resp.json(urlDatabase)
 })
 
 app.listen(PORT, () => {
