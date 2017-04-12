@@ -36,8 +36,9 @@ app.get('/urls/:id', (req, resp) => {
 app.use(Parse.urlencoded({ extended: true }))
 
 app.post('/urls', (req, resp) => {
-  console.log(req.body)
-  resp.send('Ok')
+  let key = generateRandomString()
+  urlDatabase[key] = req.body.longURL
+  resp.json(urlDatabase)
 })
 
 app.listen(PORT, () => {
