@@ -6,6 +6,10 @@
 <body>
 <%- include('partials/_header') %>
 <h4>The short url for <%= longURL%> is:</h4>
-    <a href="<%= shortURL%>"> <%= shortURL%></a>
+    <a href="/u/<%= shortURL%>"> <%= shortURL%></a>
+
+    <% if (warn) {%>
+<h3>Response Code: <%= warn%></h3>
+    <%}%>
 </body>
 </html>

@@ -1,6 +1,7 @@
 const RanStr = require('randomstring')
 const Parse = require('body-parser')
 const xp = require('express')
+const Request = require('request')
 const app = xp()
 const PORT = 3000
 
@@ -11,8 +12,14 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const temp = {
+  shortURL: '',
+  longURL: '',
+  warn: ''
+}
+
 app.get('/', (req, resp) => {
-  resp.send(`Hello! This is the random url: ${generateRandomString()}`)
+  resp.send(`Hello!`)
 })
 
 app.get("/urls.json", (req, resp) => {
@@ -24,25 +31,32 @@ app.get('/urls', (req, resp) => {
   resp.render('urls_index', templateVars)
 })
 
+//route to form to enter new long url
 app.get('/urls/new', (req, resp) => {
   resp.render('urls_new')
 })
 
+//route to a short url page
 app.get('/urls/:id', (req, resp) => {
-  let longURL = urlDatabase[req.params.id]
-  let templateVars = { shortURL: req.params.id, longURL: longURL }
-  resp.render('urls_show', templateVars)
+  temp.shortURL = req.params.id
+  temp.longURL = urlDatabase[req.params.id]
+  resp.render('urls_show', temp)
+})
+
+//route to the external long url
+app.get("/u/:shortURL", (req, resp) => {
+  temp.longURL = urlDatabase[temp.shortURL]
+  resp.redirect(temp.longURL)
 })
 
 app.use(Parse.urlencoded({ extended: true }))
 
+//route to the form after submit
 app.post('/urls', (req, resp) => {
-  let key = generateRandomString()
-  let longURL = req.body.longURL
-  urlDatabase[key] = longURL
-  let templateVars = {shortURL: key, longURL: longURL}
-  resp.render('urls_show', templateVars)
-  // resp.json(urlDatabase)
+  temp.shortURL = generateRandomString()
+  temp.longURL = req.body.longURL
+  urlDatabase[temp.shortURL] = temp.longURL
+  resp.render('urls_show', temp)
 })
 
 app.listen(PORT, () => {
