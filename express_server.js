@@ -1,5 +1,6 @@
 const RanStr = require('randomstring')
 const Parse = require('body-parser')
+const cookie = require('cookie-parser')
 const xp = require('express')
 const Request = require('request')
 const app = xp()
@@ -16,6 +17,9 @@ const temp = {
   shortURL: '',
   longURL: '',
   warn: ''
+}
+const users = {
+  username: ''
 }
 
 app.get('/', (req, resp) => {
@@ -70,6 +74,14 @@ app.post('/urls/:i/delete', (req, resp) => {
 app.post('/urls/:i/update', (req, resp) => {
   urlDatabase[req.params.i] = req.body.longURL
   let templateVars = { urls: urlDatabase }
+  resp.render('urls_index', templateVars)
+})
+
+// route from the login button
+app.post('/urls/login', (req, resp) => {
+  users.username = req.body.username
+  resp.cookie('name', users.username)
+  let templateVars = { urls: urlDatabase, users: users }
   resp.render('urls_index', templateVars)
 })
 
