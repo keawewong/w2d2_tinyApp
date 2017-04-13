@@ -24,9 +24,9 @@ const temp = {
 const users = {
   user123456keawe: {
     id: '123456keawe',
-    name: '',
-    email: '',
-    password: ''
+    name: 'Keawe',
+    email: 'email',
+    password: 'pwd'
   }
 }
 
@@ -72,7 +72,10 @@ app.use(Parse.urlencoded({ extended: true }))
 
 // route from the register button
 app.post('/urls/register', (req, resp) => {
-  if (req.body.email && req.body.password) {
+
+  let foundUserID = findUser(req.body.email)
+
+  if (req.body.email && req.body.password && !foundUserID) {
     let user_id = `user${generateRandomString(10)}`
     users[user_id] = {
       id: user_id,
@@ -81,10 +84,13 @@ app.post('/urls/register', (req, resp) => {
       password: req.body.password
     }
     temp.user_id = users[user_id].name
-    resp.cookie('user_id', user_id)
+    resp.cookie('user_id', temp.user_id)
     resp.redirect('/urls')
-
+    return
   }
+    resp.redirect(400, '/urls/register')
+
+
 })
 
 //route from submitting new url
@@ -138,4 +144,12 @@ function updateTempURL(shortURL) {
 function renderUrls_index(resp) {
   let templateVars = { urls: urlDatabase, temp }
   resp.render('urls_index', templateVars)
+}
+
+function findUser(user_email) {
+  for (user in users) {
+    if (users[user].email == user_email) {
+      return users[user].id
+    }
+  }
 }
