@@ -7,7 +7,7 @@ const app = xp()
 const PORT = 3000
 
 app.set('view engine', "ejs")
-app.use(cookie)
+app.use(cookie())
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -17,8 +17,17 @@ const urlDatabase = {
 const temp = {
   shortURL: '',
   longURL: '',
-  user: '',
+  user_id: '',
   warn: ''
+}
+
+const users = {
+  user123456keawe: {
+    id: '123456keawe',
+    name: '',
+    email: '',
+    password: ''
+  }
 }
 
 
@@ -28,6 +37,11 @@ app.get('/', (req, resp) => {
 
 app.get("/urls.json", (req, resp) => {
   resp.json(urlDatabase)
+})
+
+// route to the registration page
+app.get('/urls/register', (req, resp) => {
+  resp.render('urls_register')
 })
 
 //  route to the index page
@@ -52,11 +66,30 @@ app.get("/u/:shortURL", (req, resp) => {
   resp.redirect(temp.longURL)
 })
 
+// ------Posts-------//
+
 app.use(Parse.urlencoded({ extended: true }))
+
+// route from the register button
+app.post('/urls/register', (req, resp) => {
+  if (req.body.email && req.body.password) {
+    let user_id = `user${generateRandomString(10)}`
+    users[user_id] = {
+      id: user_id,
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+    }
+    temp.user_id = users[user_id].name
+    resp.cookie('user_id', user_id)
+    resp.redirect('/urls')
+
+  }
+})
 
 //route from submitting new url
 app.post('/urls/new', (req, resp) => {
-  temp.shortURL = generateRandomString()
+  temp.shortURL = generateRandomString(6)
   temp.longURL = req.body.longURL
   urlDatabase[temp.shortURL] = temp.longURL
   renderUrls_index(resp)
@@ -76,15 +109,15 @@ app.post('/urls/:i/update', (req, resp) => {
 
 // route from the login button
 app.post('/urls/login', (req, resp) => {
-  temp.user = req.body.username
-  resp.clearCookie('name', temp.user)
+  temp.user_id = req.body.username
+  resp.clearCookie('name', temp.user_id)
   renderUrls_index(resp)
 })
 
 // route from the logout button
 app.post('/urls/logout', (req, resp) => {
-  temp.user = ''
-  resp.cookie('name', temp.user)
+  temp.user_id = ''
+  resp.cookie('name', temp.user_id)
   renderUrls_index(resp)
 })
 
@@ -92,8 +125,8 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
 })
 
-function generateRandomString() {
-  return RanStr.generate(6)
+function generateRandomString(num) {
+  return RanStr.generate(num)
 }
 
 function updateTempURL(shortURL) {
