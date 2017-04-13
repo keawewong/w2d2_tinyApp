@@ -11,13 +11,13 @@
 
     <%- include('partials/_header') %>
 
-      <h3 class="col-md-12">Short URL: <%= shortURL%></h3>
+      <h3 class="col-md-12">Short URL: <%= temp.shortURL%></h3>
 
       <!-- Bootstrap form -->
-      <form class="form-horizonal" action="/urls/<%= shortURL%>/update" method="POST">
+      <form class="form-horizonal" action="/urls/<%= temp.shortURL%>/update" method="POST">
         <div class="form-group">
           <div class="col-md-4">
-              <input class="form-control" type="text" name="longURL" value="<%= longURL%>">
+              <input class="form-control" type="text" name="longURL" value="<%= temp.longURL%>">
           </div>
 
           <button class="btn btn-default" type="submit" value="submit">Update</button>

@@ -16,11 +16,10 @@ const urlDatabase = {
 const temp = {
   shortURL: '',
   longURL: '',
+  user: '',
   warn: ''
 }
-const users = {
-  username: ''
-}
+
 
 app.get('/', (req, resp) => {
   resp.send(`Hello!`)
@@ -32,19 +31,18 @@ app.get("/urls.json", (req, resp) => {
 
 //  route to the index page
 app.get('/urls', (req, resp) => {
-  let templateVars = { urls: urlDatabase }
-  resp.render('urls_index', templateVars)
+  renderUrls_index(resp)
 })
 
 //route to form to enter new long url
 app.get('/urls/new', (req, resp) => {
-  resp.render('urls_new')
+  resp.render('urls_new', { temp })
 })
 
 //route to each short url page
 app.get('/urls/:i', (req, resp) => {
   updateTempURL(req.params.i)
-  resp.render('urls_show', temp)
+  resp.render('urls_show', { temp })
 })
 
 //route to the external long url
@@ -55,34 +53,31 @@ app.get("/u/:shortURL", (req, resp) => {
 
 app.use(Parse.urlencoded({ extended: true }))
 
-//route to the form after submit
-app.post('/urls', (req, resp) => {
+//route from submitting new url
+app.post('/urls/new', (req, resp) => {
   temp.shortURL = generateRandomString()
   temp.longURL = req.body.longURL
   urlDatabase[temp.shortURL] = temp.longURL
-  resp.render('urls_show', temp)
+  renderUrls_index(resp)
 })
 
 // route from the Delete button
 app.post('/urls/:i/delete', (req, resp) => {
   delete urlDatabase[req.params.i]
-  let templateVars = { urls: urlDatabase }
-  resp.render('urls_index', templateVars)
+  renderUrls_index(resp)
 })
 
 // route from the Update button
 app.post('/urls/:i/update', (req, resp) => {
   urlDatabase[req.params.i] = req.body.longURL
-  let templateVars = { urls: urlDatabase }
-  resp.render('urls_index', templateVars)
+  renderUrls_index(resp)
 })
 
 // route from the login button
 app.post('/urls/login', (req, resp) => {
-  users.username = req.body.username
-  resp.cookie('name', users.username)
-  let templateVars = { urls: urlDatabase, users: users }
-  resp.render('urls_index', templateVars)
+  temp.user = req.body.username
+  resp.cookie('name', temp.user)
+  renderUrls_index(resp)
 })
 
 app.listen(PORT, () => {
@@ -97,4 +92,9 @@ function updateTempURL(shortURL) {
   temp.shortURL = shortURL
   temp.longURL = urlDatabase[temp.shortURL]
 
+}
+
+function renderUrls_index(resp) {
+  let templateVars = { urls: urlDatabase, temp }
+  resp.render('urls_index', templateVars)
 }
