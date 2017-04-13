@@ -1,22 +1,29 @@
 <div class="row">
   <header class="col-md-12 col-sm-12" 2style="padding-bottom: 10px">
 
-    <nav class="navbar navbar-default">
-      <div class="container">
-        <div class="navbar-header">
-          <p class="navbar-brand"><b>Tiny URLs</b></p>
-          <% if (!temp.userName) { %>
-            <a href="/urls/register" class="navbar-text">Register</a>
-              <p class="navbar-text"> | </p>
-            <a href="/urls/login" class="navbar-text">Log In</a>
-            <% } else { %>
-              <p class="navbar-text">Hi <%=temp.userName %> </p>
-              <% } %>
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <p class="navbar-brand"><b>Tiny URLs</b></p>
+            <% if (!temp.userName) { %>
+              <a href="/urls/register" class="navbar-text">Register</a>
+              <% if (temp.page !== 'login') {%>
+                <p class="navbar-text"> | </p>
+                <a href="/urls/login" class="navbar-text">Log In</a>
+                <% } %>
+                  <% } else { %>
+                    <p class="navbar-text">Hi
+                      <%=temp.userName %>
+                    </p>
+                    <% } %>
+          </div>
+
         </div>
+      </nav>
 
-      </div>
-    </nav>
-
+    </div>
+    <!-- class="container" -->
   </header>
 
 </div>

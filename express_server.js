@@ -14,10 +14,12 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// temp contains all the varibles neccessary to route to each page
 const temp = {
   shortURL: '',
   longURL: '',
   userName: '',
+  page: '',
   warn: ''
 }
 
@@ -41,7 +43,14 @@ app.get("/urls.json", (req, resp) => {
 
 // route to the registration page
 app.get('/urls/register', (req, resp) => {
-  resp.render('urls_register', {temp})
+  temp.page = 'register'
+  resp.render('urls_register', { temp })
+})
+
+// route to the login page
+app.get('/urls/login', (req, resp) => {
+  temp.page = 'login'
+  resp.render('urls_login', { temp })
 })
 
 //  route to the index page
@@ -73,9 +82,9 @@ app.use(Parse.urlencoded({ extended: true }))
 // route from the register button
 app.post('/urls/register', (req, resp) => {
 
-  let foundUserID = findUser(req.body.email)
+  let foundUserObj = findUser(req.body.email)
 
-  if (req.body.email && req.body.password && !foundUserID) {
+  if (req.body.email && req.body.password && !foundUserObj) {
     let user_id = `user${generateRandomString(10)}`
     users[user_id] = {
       id: user_id,
@@ -88,9 +97,21 @@ app.post('/urls/register', (req, resp) => {
     resp.redirect('/urls')
     return
   }
-    resp.redirect(400, '/urls/register')
+  resp.redirect(400, '/urls/register')
+})
 
-
+// route from the login button
+app.post('/urls/login', (req, resp) => {
+  let foundUserObj = findUser(req.body.email)
+  if (req.body.email && req.body.password && foundUserObj) {
+    if (req.body.password === users[foundUserObj].password) {
+      temp.userName = users[foundUserObj].name
+      resp.cookie('user_id', temp.userName)
+      renderUrls_index(resp)
+      return
+    }
+  }
+  resp.redirect(403, '/urls/login')
 })
 
 //route from submitting new url
@@ -113,12 +134,6 @@ app.post('/urls/:i/update', (req, resp) => {
   renderUrls_index(resp)
 })
 
-// route from the login button
-app.post('/urls/login', (req, resp) => {
-  temp.user_id = req.body.username
-  resp.clearCookie('name', temp.user_id)
-  renderUrls_index(resp)
-})
 
 // route from the logout button
 app.post('/urls/logout', (req, resp) => {
