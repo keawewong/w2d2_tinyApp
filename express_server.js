@@ -17,7 +17,7 @@ const urlDatabase = {
 const temp = {
   shortURL: '',
   longURL: '',
-  user_id: '',
+  userName: '',
   warn: ''
 }
 
@@ -41,7 +41,7 @@ app.get("/urls.json", (req, resp) => {
 
 // route to the registration page
 app.get('/urls/register', (req, resp) => {
-  resp.render('urls_register')
+  resp.render('urls_register', {temp})
 })
 
 //  route to the index page
@@ -83,8 +83,8 @@ app.post('/urls/register', (req, resp) => {
       email: req.body.email,
       password: req.body.password
     }
-    temp.user_id = users[user_id].name
-    resp.cookie('user_id', temp.user_id)
+    temp.userName = users[user_id].name
+    resp.cookie('user_id', temp.userName)
     resp.redirect('/urls')
     return
   }

@@ -1,35 +1,21 @@
 <div class="row">
   <header class="col-md-12 col-sm-12" 2style="padding-bottom: 10px">
-    <h2 class="col-md-12 col-sm-12">The Tiny URL App</h2>
 
-    <% if (!temp.user) { %>
-      <!-- Bootstrap form -->
-      <form class="form-horizonal" action="/urls/login" method="POST">
-        <div class="form-group">
-          <div class="col-md-4 col-sm-4">
-            <input class="form-control pull-left" type="text" name="username" placeholder="user name">
-          </div>
-
-          <div class="col-md-1 col-md-pull-1 col-sm-1 col-sm-pull-1">
-            <button class="btn btn-default" type="submit" value="submit">Log In <span class="glyphicon glyphicon-log-in"></span></button>
-          </div>
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <p class="navbar-brand"><b>Tiny URLs</b></p>
+          <% if (!temp.userName) { %>
+            <a href="/urls/register" class="navbar-text">Register</a>
+              <p class="navbar-text"> | </p>
+            <a href="/urls/login" class="navbar-text">Log In</a>
+            <% } else { %>
+              <p class="navbar-text">Hi <%=temp.userName %> </p>
+              <% } %>
         </div>
-      </form>
-      <!-- End Bootstrap form -->
 
-      <% } else { %>
-        <!-- Bootstrap form -->
-        <form class="form-horizonal" action="/urls/logout" method="POST">
-
-          <div class="form-group">
-            <h4 class="col-md-4"><%=`Hi ${temp.user}` %></h4>
-            <button class="btn btn-default col-md-1 col-md-pull-1" type="submit" value="submit">Log Out <span class="glyphicon glyphicon-log-in"></span></button>
-          </div>
-          <!-- class="form-group" -->
-        </form>
-        <!-- End Bootstrap form -->
-
-        <% } %>
+      </div>
+    </nav>
 
   </header>
 
