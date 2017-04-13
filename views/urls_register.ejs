@@ -1,0 +1,47 @@
+<html>
+
+<%-include('partials/_headTag.ejs') %>
+
+  <body>
+
+    <div class="container">
+      <h2 class="col-md-12 h1">Please register here.</h2>
+      <div class="col-md-12">
+
+        <div class="row">
+          <!-- Bootstrap form -->
+          <form action="/urls/register" method="POST">
+            <div class="form-group col-md-6">
+              <label class="control-label" for="inputName">Name</label>
+              <input class="form-control" type="text" name="name" placeholder="Your first name here">
+            </div>
+            <!-- class="form-group" -->
+            <div class="clearfix"></div>
+            <div class="form-group col-md-6">
+              <label class="control-label" for="inputName">E-mail</label>
+              <input class="form-control" type="text" name="email" placeholder="your@email.here">
+            </div>
+            <!-- class="form-group" -->
+            <div class="clearfix"></div>
+            <div class="form-group col-md-6">
+              <label class="control-label" for="inputName">Password</label>
+              <input class="form-control" type="password" name="password" placeholder="your password here">
+            </div>
+            <!-- class="form-group -->
+            <div class="clearfix"></div>
+            <div class="form-group col-md-1">
+              <button class="btn btn-primary" type="submit">Register</button>
+            </div>
+          </form>
+          <!-- End Bootstrap form -->
+
+        </div>
+        <!-- class="row" -->
+      </div>
+      <!-- class="col-md-12" -->
+
+    </div>
+  </body>
+  <!-- class="container" -->
+
+</html>
