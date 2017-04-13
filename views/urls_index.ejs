@@ -6,51 +6,53 @@
   <title>Tiny App</title>
 </head> -->
 <%- include('partials/_headTag') %>
-<body>
-  <div class="container">
+
+  <body>
+    <div class="container">
 
       <%- include('partials/_header') %>
 
-    <% for(i in urls) { %>
-      <div class="row">
+        <br>
+        <% for(i in urls) { %>
+          <div class="row">
 
-        <div class="col-md-12 col-sm-12">
-          <!-- Bootstrap form -->
-          <form class="form-horizonal" action="/urls/<%= i %>/delete" method="POST">
-            <div class="form-group">
-              <div class="col-md-5 col-sm-6">
-                <a href="<%= urls[i] %>">
-                  <%= i%>
-                </a> <span class="glyphicon glyphicon-arrow-right"></span>
-                <%= urls[i] %>
-              </div>
+            <div class="col-md-12 col-sm-12">
+              <!-- Bootstrap form -->
+              <form class="form-horizonal" action="/urls/<%= i %>/delete" method="POST">
+                <div class="form-group">
+                  <div class="col-md-5 col-sm-6">
+                    <a href="<%= urls[i] %>">
+                      <%= i%>
+                    </a> <span class="glyphicon glyphicon-arrow-right"></span>
+                    <%= urls[i] %>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-md-1 col-sm-1">
+                    <a href="/urls/<%= i %>">Edit</a>
+                    <!-- Route to urls_show -->
+                  </div>
+                  <div class="col-md-1 col-sm-2">
+
+                    <button class="btn btn-default pull-right" type="submit" value="submit">
+                      Delete <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                  </div>
+                </div>
+
+              </form>
+              <!-- End Bootstrap form -->
             </div>
+            <!-- class="col-md-12" -->
 
-            <div class="form-group">
-              <div class="col-md-1 col-sm-1">
-                <a href="/urls/<%= i %>">Edit</a>
-                <!-- Route to urls_show -->
-              </div>
-              <div class="col-md-1 col-sm-2">
+          </div>
+          <!-- class="row" -->
+          <% } %>
 
-                <button class="btn btn-default pull-right" type="submit" value="submit">
-                  Delete <span class="glyphicon glyphicon-trash"></span>
-                </button>
-              </div>
-            </div>
+    </div>
+    <!-- clase= "container" -->
 
-          </form>
-          <!-- End Bootstrap form -->
-        </div>
-        <!-- class="col-md-12" -->
-
-      </div>
-      <!-- class="row" -->
-      <% } %>
-
-  </div>
-  <!-- clase= "container" -->
-
-</body>
+  </body>
 
 </html>

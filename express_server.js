@@ -76,6 +76,13 @@ app.post('/urls/:i/update', (req, resp) => {
 // route from the login button
 app.post('/urls/login', (req, resp) => {
   temp.user = req.body.username
+  resp.clearCookie('name', temp.user)
+  renderUrls_index(resp)
+})
+
+// route from the logout button
+app.post('/urls/logout', (req, resp) => {
+  temp.user = ''
   resp.cookie('name', temp.user)
   renderUrls_index(resp)
 })
