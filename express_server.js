@@ -7,6 +7,7 @@ const app = xp()
 const PORT = 3000
 
 app.set('view engine', "ejs")
+app.use(cookie)
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
