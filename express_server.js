@@ -1,6 +1,6 @@
 const RanStr = require('randomstring')
 const Parse = require('body-parser')
-const cookieS = require('cookie-parser')
+const cookieS = require('cookie-session')
 const bcrypt = require('bcrypt')
 const xp = require('express')
 const Request = require('request')
@@ -8,7 +8,15 @@ const app = xp()
 const PORT = 3000
 
 app.set('view engine', "ejs")
-app.use(cookie())
+
+const cookieKey = generateRandomString(6)
+app.use(cookieS({
+  name: 'session',
+  keys: [cookieKey],
+  maxAge: 24 * 60 * 60 * 1000
+}
+
+  ))
 
 const urlDatabase = {
   "b2xVn2": {
@@ -34,7 +42,8 @@ const users = {
 
 app.get('/', (req, resp) => {
   resp.send(`Hello!`)
-  console.log(req.cookies.user_id)
+  // console.log(req.cookies.user_id)
+  console.log(req.session.user_id)
 })
 
 app.get("/urls.json", (req, resp) => {
@@ -55,7 +64,7 @@ app.get('/urls/login', (req, resp) => {
 
 //  route to the index page
 app.get('/urls', (req, resp) => {
-  renderUrls_index(req.cookies.user_id, resp)
+  renderUrls_index(req.session.user_id, resp)
 })
 
 // route to logout
@@ -66,8 +75,8 @@ app.get('/urls/logout', (req, resp) => {
 
 //route to form to enter new long url
 app.get('/urls/new', (req, resp) => {
-  if (req.cookies.user_id) {
-    let temp = tempObj('', '', req.cookies.user_id, 'new')
+  if (req.session.user_id) {
+    let temp = tempObj('', '', req.session.user_id, 'new')
     resp.render('urls_new', { temp })
     return
   }
@@ -79,7 +88,7 @@ app.get('/urls/:i', (req, resp) => {
   let shortURL = req.params.i
   let longURL = urlDatabase[shortURL].url
   let userName = ''
-  let userID = (req.cookies.user_id ? req.cookies.user_id : '')
+  let userID = (req.session.user_id ? req.session.user_id : '')
   let temp = tempObj(shortURL, longURL, userID, 'edit')
   resp.render('urls_show', { temp })
 })
@@ -110,7 +119,8 @@ app.post('/urls/register', (req, resp) => {
       password: hashed_pwd
     }
     console.log(users)
-    resp.cookie('user_id', id)
+    // resp.cookie('user_id', id)
+    req.session.user_id = id
     renderUrls_index(id, resp)
     return
   }
@@ -125,7 +135,8 @@ app.post('/urls/login', (req, resp) => {
       // console.log(`hashed: ${hashed_pwd}`)
     if (bcrypt.compareSync(req.body.password, hashed_pwd)) {
       // if (req.body.password === users[foundUserKey].password) {
-      resp.cookie('user_id', users[foundUserKey].id)
+      // resp.cookie('user_id', users[foundUserKey].id)
+      req.session.user_id = users[foundUserKey].id
       renderUrls_index(users[foundUserKey].id, resp)
       return
     }
@@ -135,26 +146,26 @@ app.post('/urls/login', (req, resp) => {
 
 //route from submitting new url
 app.post('/urls/new', (req, resp) => {
-  if (req.cookies.user_id) {
-    let userKey = findUserKey('id', req.cookies.user_id)
+  if (req.session.user_id) {
+    let userKey = findUserKey('id', req.session.user_id)
     let shortURL = generateRandomString(6)
     urlDatabase[shortURL] = { userID: {} }
     urlDatabase[shortURL].userID = userKey
     urlDatabase[shortURL].url = req.body.longURL
   }
-  renderUrls_index(req.cookies.user_id, resp)
+  renderUrls_index(req.session.user_id, resp)
 })
 
 // route from the Delete button
 app.post('/urls/:i/delete', (req, resp) => {
   delete urlDatabase[req.params.i]
-  renderUrls_index(req.cookies.user_id, resp)
+  renderUrls_index(req.session.user_id, resp)
 })
 
 // route from the Update button
 app.post('/urls/:i/update', (req, resp) => {
   urlDatabase[req.params.i].url = req.body.longURL
-  renderUrls_index(req.cookies.user_id, resp)
+  renderUrls_index(req.session.user_id, resp)
 })
 
 
