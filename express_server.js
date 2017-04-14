@@ -14,15 +14,6 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-// temp contains all the varibles neccessary to route to each page
-const temp = {
-  shortURL: '',
-  longURL: '',
-  userName: '',
-  page: '',
-  warn: ''
-}
-
 const users = {
   user123456keawe: {
     id: '123456keawe',
@@ -35,6 +26,7 @@ const users = {
 
 app.get('/', (req, resp) => {
   resp.send(`Hello!`)
+  console.log(req.cookies.user_id)
 })
 
 app.get("/urls.json", (req, resp) => {
@@ -43,36 +35,40 @@ app.get("/urls.json", (req, resp) => {
 
 // route to the registration page
 app.get('/urls/register', (req, resp) => {
-  temp.page = 'register'
+  let temp = tempObj('', '', '', 'register')
   resp.render('urls_register', { temp })
 })
 
 // route to the login page
 app.get('/urls/login', (req, resp) => {
-  temp.page = 'login'
+  let temp = tempObj('', '', '', 'login')
   resp.render('urls_login', { temp })
 })
 
 //  route to the index page
 app.get('/urls', (req, resp) => {
-  renderUrls_index(resp)
+  renderUrls_index(req.cookies.user_id, resp)
 })
 
 //route to form to enter new long url
 app.get('/urls/new', (req, resp) => {
+  let userKey = findUserKey('id', req.cookies.user_id)
+  let temp = tempObj('', '', users[userKey].name, 'new')
   resp.render('urls_new', { temp })
 })
 
 //route to each short url page
 app.get('/urls/:i', (req, resp) => {
-  updateTempURL(req.params.i)
+  let shortURL = req.params.i
+  let longURL = urlDatabase[req.params.i]
+  let userKey = findUserKey('id', req.cookies.user_id)
+  let temp = tempObj(shortURL, longURL, users[userKey].name, 'edit')
   resp.render('urls_show', { temp })
 })
 
 //route to the external long url
 app.get("/u/:shortURL", (req, resp) => {
-  updateTempURL(req.params.i)
-  resp.redirect(temp.longURL)
+  resp.redirect(req.params.i)
 })
 
 // ------Posts-------//
@@ -82,19 +78,19 @@ app.use(Parse.urlencoded({ extended: true }))
 // route from the register button
 app.post('/urls/register', (req, resp) => {
 
-  let foundUserObj = findUser(req.body.email)
-
-  if (req.body.email && req.body.password && !foundUserObj) {
-    let user_id = `user${generateRandomString(10)}`
-    users[user_id] = {
-      id: user_id,
+  let foundUserKey = findUserKey('email', req.body.email)
+  let userKey = ''
+  if (req.body.email && req.body.password && !foundUserKey) {
+    let id = generateRandomString(10)
+    userKey = `user${id}`
+    users[userKey] = {
+      id: id,
       name: req.body.name,
       email: req.body.email,
       password: req.body.password
     }
-    temp.userName = users[user_id].name
-    resp.cookie('user_id', temp.userName)
-    resp.redirect('/urls')
+    resp.cookie('user_id', id)
+    renderUrls_index(id, resp)
     return
   }
   resp.redirect(400, '/urls/register')
@@ -102,12 +98,11 @@ app.post('/urls/register', (req, resp) => {
 
 // route from the login button
 app.post('/urls/login', (req, resp) => {
-  let foundUserObj = findUser(req.body.email)
-  if (req.body.email && req.body.password && foundUserObj) {
-    if (req.body.password === users[foundUserObj].password) {
-      temp.userName = users[foundUserObj].name
-      resp.cookie('user_id', temp.userName)
-      renderUrls_index(resp)
+  let foundUserKey = findUserKey('email', req.body.email)
+  if (req.body.email && req.body.password && foundUserKey) {
+    if (req.body.password === users[foundUserKey].password) {
+      resp.cookie('user_id', users[foundUserKey].id)
+      renderUrls_index(users[foundUserKey].id, resp)
       return
     }
   }
@@ -116,30 +111,28 @@ app.post('/urls/login', (req, resp) => {
 
 //route from submitting new url
 app.post('/urls/new', (req, resp) => {
-  temp.shortURL = generateRandomString(6)
-  temp.longURL = req.body.longURL
-  urlDatabase[temp.shortURL] = temp.longURL
-  renderUrls_index(resp)
+  let shortURL = generateRandomString(6)
+  urlDatabase[shortURL] = req.body.longURL
+  renderUrls_index(req.cookies.user_id, resp)
 })
 
 // route from the Delete button
 app.post('/urls/:i/delete', (req, resp) => {
   delete urlDatabase[req.params.i]
-  renderUrls_index(resp)
+  renderUrls_index(req.cookies.user_id, resp)
 })
 
 // route from the Update button
 app.post('/urls/:i/update', (req, resp) => {
   urlDatabase[req.params.i] = req.body.longURL
-  renderUrls_index(resp)
+  renderUrls_index(req.cookies.user_id, resp)
 })
 
 
 // route from the logout button
 app.post('/urls/logout', (req, resp) => {
-  temp.user_id = ''
-  resp.cookie('name', temp.user_id)
-  renderUrls_index(resp)
+  resp.clearCookie('user_id')
+  renderUrls_index('', resp)
 })
 
 app.listen(PORT, () => {
@@ -150,21 +143,26 @@ function generateRandomString(num) {
   return RanStr.generate(num)
 }
 
-function updateTempURL(shortURL) {
-  temp.shortURL = shortURL
-  temp.longURL = urlDatabase[temp.shortURL]
-
-}
-
-function renderUrls_index(resp) {
+function renderUrls_index(cookie, resp) {
+  let userName = '',
+    userKey = ''
+  if (cookie) {
+    userKey = findUserKey('id', cookie)
+    userName = (userKey ? users[userKey].name : '')
+  }
+  let temp = tempObj('', '', userName, 'index')
   let templateVars = { urls: urlDatabase, temp }
   resp.render('urls_index', templateVars)
 }
 
-function findUser(user_email) {
+function findUserKey(key, value) {
   for (user in users) {
-    if (users[user].email == user_email) {
-      return users[user].id
-    }
+    if (users[user][key] === value) return user
+
   }
+}
+
+// Make the temp obj to track user info
+function tempObj(shortURL, longURL, userName, page) {
+  return { shortURL, longURL, userName, page }
 }
