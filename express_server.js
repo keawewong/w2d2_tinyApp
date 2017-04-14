@@ -1,6 +1,6 @@
 const RanStr = require('randomstring')
 const Parse = require('body-parser')
-const cookie = require('cookie-parser')
+const cookieS = require('cookie-parser')
 const bcrypt = require('bcrypt')
 const xp = require('express')
 const Request = require('request')
