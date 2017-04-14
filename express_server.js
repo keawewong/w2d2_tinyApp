@@ -50,6 +50,12 @@ app.get('/urls', (req, resp) => {
   renderUrls_index(req.cookies.user_id, resp)
 })
 
+// route to logout
+app.get('/urls/logout', (req, resp) => {
+  resp.clearCookie('user_id')
+  renderUrls_index('', resp)
+})
+
 //route to form to enter new long url
 app.get('/urls/new', (req, resp) => {
   let userKey = findUserKey('id', req.cookies.user_id)
@@ -128,12 +134,6 @@ app.post('/urls/:i/update', (req, resp) => {
   renderUrls_index(req.cookies.user_id, resp)
 })
 
-
-// route from the logout button
-app.post('/urls/logout', (req, resp) => {
-  resp.clearCookie('user_id')
-  renderUrls_index('', resp)
-})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)

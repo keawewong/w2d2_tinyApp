@@ -1,30 +1,41 @@
 <div class="row">
   <header class="col-md-12 col-sm-12" 2style="padding-bottom: 10px">
 
-    <div class="container">
-      <nav class="navbar navbar-default">
-        <div class="container">
-          <div class="navbar-header">
-            <p class="navbar-brand"><b>Tiny URLs</b></p>
-            <% if (!temp.userName) { %>
-              <a href="/urls/register" class="navbar-text">Register</a>
-              <% if (temp.page !== 'login') {%>
-                <p class="navbar-text"> | </p>
-                <a href="/urls/login" class="navbar-text">Log In</a>
-                <% } %>
-                  <% } else { %>
-                    <p class="navbar-brand">Hi
-                      <%=temp.userName %>
-                    </p>
-                    <% } %>
-          </div>
+    <nav class="navbar navbar-default">
+      <div class="container">
 
+        <div class="navbar-header">
+          <p class="navbar-brand"><b>Tiny URLs</b></p>
         </div>
-      </nav>
+        <!-- class="navbar-header" -->
 
-    </div>
-    <!-- class="container" -->
-  </header>
+        <% if (!temp.userName) { %>
+          <a href="/urls/register" class="navbar-text">Register</a>
+          <% if (temp.page !== 'login') {%>
+            <p class="navbar-text"> | </p>
+            <a href="/urls/login" class="navbar-text">Log In</a>
+            <% } %>
+              <% } else { %>
+                <p class="navbar-brand">Hi
+                  <%=temp.userName %>
+                </p>
+                <% } %>
+
+                  <ul class="nav navbar-nav">
+                    <li><a href="/urls/logout">Log Out</a></li>
+                    <!-- <li class="active"><a href="#">Mission</a></li> -->
+                  </ul>
+                  <!-- use the navbar-btn to align the button with the navbar -->
+
+      </div>
+      <!-- class="container" -->
+
+    </nav>
+    <!-- class="navbar navbar-default " -->
 
 </div>
-<!-- class="row" -->
+<!-- class="container " -->
+</header>
+
+</div>
+<!-- class="row " -->
