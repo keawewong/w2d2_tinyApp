@@ -1,6 +1,7 @@
 const RanStr = require('randomstring')
 const Parse = require('body-parser')
 const cookie = require('cookie-parser')
+const bcrypt = require('bcrypt')
 const xp = require('express')
 const Request = require('request')
 const app = xp()
@@ -22,11 +23,11 @@ const urlDatabase = {
 };
 
 const users = {
-  'user123456keawe': {
-    id: '123456keawe',
-    name: '1234',
-    email: '1234',
-    password: '1234'
+  'user123456bear': {
+    id: '123456bear',
+    name: 'bear',
+    email: 'bear',
+    password: '$2a$10$wyPWXC/QwGsh3NgVf.pxOeVAmvfni6brjzvF17o3N0vIN01X3s2hq'
   }
 }
 
@@ -99,13 +100,16 @@ app.post('/urls/register', (req, resp) => {
   let userKey = ''
   if (req.body.email && req.body.password && !foundUserKey) {
     let id = generateRandomString(10)
+    let hashed_pwd = bcrypt.hashSync(req.body.password, 10)
     userKey = `user${id}`
     users[userKey] = {
       id: id,
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password
+      // password: req.body.password
+      password: hashed_pwd
     }
+    console.log(users)
     resp.cookie('user_id', id)
     renderUrls_index(id, resp)
     return
@@ -117,7 +121,10 @@ app.post('/urls/register', (req, resp) => {
 app.post('/urls/login', (req, resp) => {
   let foundUserKey = findUserKey('email', req.body.email)
   if (req.body.email && req.body.password && foundUserKey) {
-    if (req.body.password === users[foundUserKey].password) {
+    let hashed_pwd = users[foundUserKey].password
+      // console.log(`hashed: ${hashed_pwd}`)
+    if (bcrypt.compareSync(req.body.password, hashed_pwd)) {
+      // if (req.body.password === users[foundUserKey].password) {
       resp.cookie('user_id', users[foundUserKey].id)
       renderUrls_index(users[foundUserKey].id, resp)
       return
@@ -177,8 +184,8 @@ function tempObj(shortURL, longURL, userID, page) {
   let userName = ''
   let userKey = ''
   if (userID) {
-    userKey = findUserKey('id', userID)
-    userName = users[userKey].name
+    userKey = (findUserKey('id', userID) ? findUserKey('id', userID) : '')
+    userName = (userKey ? users[userKey].name : '')
   }
   return { shortURL, longURL, userKey, userName, page }
 }
