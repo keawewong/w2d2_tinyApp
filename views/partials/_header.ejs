@@ -22,14 +22,20 @@
                 <% } %>
 
                   <ul class="nav navbar-nav">
-                  <% if (temp.userName) {%>
-                    <% if (temp.page == 'new') { %>
-                      <li class="active"><a href="/urls/new">New URL</a></li>
-                      <% } else { %>
-                        <li><a href="/urls/new">New URL</a></li>
-                        <% } %>
-                          <li><a href="/urls/logout">Log Out</a></li>
-                          <%} %>
+                    <% if (temp.page == 'index') {%>
+                      <li class="active"><a href="/urls/">Home</a></li>
+                      <%} else {%>
+                        <li><a href="/urls/">Home</a></li>
+                        <%} %>
+
+                          <% if (temp.userName) {%>
+                            <% if (temp.page == 'new') { %>
+                              <li class="active"><a href="/urls/new">New URL</a></li>
+                              <% } else { %>
+                                <li><a href="/urls/new">New URL</a></li>
+                                <% } %>
+                                  <li><a href="/urls/logout">Log Out</a></li>
+                                  <%} %>
                   </ul>
                   <!-- use the navbar-btn to align the button with the navbar -->
 

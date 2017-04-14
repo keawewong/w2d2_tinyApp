@@ -11,21 +11,21 @@ app.set('view engine', "ejs")
 
 const cookieKey = generateRandomString(6)
 app.use(cookieS({
-  name: 'session',
-  keys: [cookieKey],
-  maxAge: 24 * 60 * 60 * 1000
-}
+    name: 'session',
+    keys: [cookieKey],
+    maxAge: 24 * 60 * 60 * 1000
+  }
 
-  ))
+))
 
 const urlDatabase = {
   "b2xVn2": {
-    userID: 'user123456keawe',
+    userID: 'user123456bear',
     url: "http://www.lighthouselabs.ca"
   },
 
   "9sm5xK": {
-    userID: 'user123456keawe',
+    userID: 'user123456bear',
     url: "http://www.google.com"
   }
 };
@@ -42,7 +42,7 @@ const users = {
 
 app.get('/', (req, resp) => {
   resp.send(`Hello!`)
-  // console.log(req.cookies.user_id)
+    // console.log(req.cookies.user_id)
   console.log(req.session.user_id)
 })
 
@@ -115,11 +115,9 @@ app.post('/urls/register', (req, resp) => {
       id: id,
       name: req.body.name,
       email: req.body.email,
-      // password: req.body.password
       password: hashed_pwd
     }
     console.log(users)
-    // resp.cookie('user_id', id)
     req.session.user_id = id
     renderUrls_index(id, resp)
     return
@@ -132,10 +130,7 @@ app.post('/urls/login', (req, resp) => {
   let foundUserKey = findUserKey('email', req.body.email)
   if (req.body.email && req.body.password && foundUserKey) {
     let hashed_pwd = users[foundUserKey].password
-      // console.log(`hashed: ${hashed_pwd}`)
     if (bcrypt.compareSync(req.body.password, hashed_pwd)) {
-      // if (req.body.password === users[foundUserKey].password) {
-      // resp.cookie('user_id', users[foundUserKey].id)
       req.session.user_id = users[foundUserKey].id
       renderUrls_index(users[foundUserKey].id, resp)
       return
@@ -177,12 +172,14 @@ function generateRandomString(num) {
   return RanStr.generate(num)
 }
 
+// renders the index page
 function renderUrls_index(cookie, resp) {
   let temp = tempObj('', '', cookie, 'index')
   let templateVars = { urls: urlDatabase, temp }
   resp.render('urls_index', templateVars)
 }
 
+// find the user's key by using any property and the value
 function findUserKey(key, value) {
   for (user in users) {
     if (users[user][key] === value) return user
