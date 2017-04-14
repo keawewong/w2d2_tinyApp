@@ -10,16 +10,23 @@ app.set('view engine', "ejs")
 app.use(cookie())
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    userID: 'user123456keawe',
+    url: "http://www.lighthouselabs.ca"
+  },
+
+  "9sm5xK": {
+    userID: 'user123456keawe',
+    url: "http://www.google.com"
+  }
 };
 
 const users = {
-  user123456keawe: {
+  'user123456keawe': {
     id: '123456keawe',
-    name: 'Keawe',
-    email: 'email',
-    password: 'pwd'
+    name: '1234',
+    email: '1234',
+    password: '1234'
   }
 }
 
@@ -58,17 +65,21 @@ app.get('/urls/logout', (req, resp) => {
 
 //route to form to enter new long url
 app.get('/urls/new', (req, resp) => {
-  let userKey = findUserKey('id', req.cookies.user_id)
-  let temp = tempObj('', '', users[userKey].name, 'new')
-  resp.render('urls_new', { temp })
+  if (req.cookies.user_id) {
+    let temp = tempObj('', '', req.cookies.user_id, 'new')
+    resp.render('urls_new', { temp })
+    return
+  }
+  renderUrls_index('', resp)
 })
 
 //route to each short url page
 app.get('/urls/:i', (req, resp) => {
   let shortURL = req.params.i
-  let longURL = urlDatabase[req.params.i]
-  let userKey = findUserKey('id', req.cookies.user_id)
-  let temp = tempObj(shortURL, longURL, users[userKey].name, 'edit')
+  let longURL = urlDatabase[shortURL].url
+  let userName = ''
+  let userID = (req.cookies.user_id ? req.cookies.user_id : '')
+  let temp = tempObj(shortURL, longURL, userID, 'edit')
   resp.render('urls_show', { temp })
 })
 
@@ -117,8 +128,13 @@ app.post('/urls/login', (req, resp) => {
 
 //route from submitting new url
 app.post('/urls/new', (req, resp) => {
-  let shortURL = generateRandomString(6)
-  urlDatabase[shortURL] = req.body.longURL
+  if (req.cookies.user_id) {
+    let userKey = findUserKey('id', req.cookies.user_id)
+    let shortURL = generateRandomString(6)
+    urlDatabase[shortURL] = { userID: {} }
+    urlDatabase[shortURL].userID = userKey
+    urlDatabase[shortURL].url = req.body.longURL
+  }
   renderUrls_index(req.cookies.user_id, resp)
 })
 
@@ -130,7 +146,7 @@ app.post('/urls/:i/delete', (req, resp) => {
 
 // route from the Update button
 app.post('/urls/:i/update', (req, resp) => {
-  urlDatabase[req.params.i] = req.body.longURL
+  urlDatabase[req.params.i].url = req.body.longURL
   renderUrls_index(req.cookies.user_id, resp)
 })
 
@@ -144,13 +160,7 @@ function generateRandomString(num) {
 }
 
 function renderUrls_index(cookie, resp) {
-  let userName = '',
-    userKey = ''
-  if (cookie) {
-    userKey = findUserKey('id', cookie)
-    userName = (userKey ? users[userKey].name : '')
-  }
-  let temp = tempObj('', '', userName, 'index')
+  let temp = tempObj('', '', cookie, 'index')
   let templateVars = { urls: urlDatabase, temp }
   resp.render('urls_index', templateVars)
 }
@@ -163,6 +173,12 @@ function findUserKey(key, value) {
 }
 
 // Make the temp obj to track user info
-function tempObj(shortURL, longURL, userName, page) {
-  return { shortURL, longURL, userName, page }
+function tempObj(shortURL, longURL, userID, page) {
+  let userName = ''
+  let userKey = ''
+  if (userID) {
+    userKey = findUserKey('id', userID)
+    userName = users[userKey].name
+  }
+  return { shortURL, longURL, userKey, userName, page }
 }

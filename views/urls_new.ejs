@@ -3,26 +3,26 @@
 <%- include('partials/_headTag') %>
 
   <body>
-    <div class="container">
-      <%- include('partials/_header') %>
-        <br>
+    <%- include('partials/_header') %>
+      <br>
+      <div class="container">
         <!-- Bootstrap form -->
         <form class="form-horizonal" action="/urls/new" method="POST">
 
-            <div class="form-group">
-              <label class="control-label col-md-2 " for="longURL ">Enter a URL:</label>
-              <div class="col-md-5 col-md-pull-1">
-                <input class="form-control " id="longURL " type="text" name="longURL" placeholder="http:// ">
-              </div>
-              <!-- class="col-md-4" -->
-              <button class="btn btn-default col-md-1 col-md-pull-1" type="submit" value="Submit">Submit</button>
+          <div class="form-group">
+            <label class="control-label col-md-2 " for="longURL ">Enter a URL:</label>
+            <div class="col-md-5 col-md-pull-1">
+              <input class="form-control " id="longURL " type="text" name="longURL" placeholder="http:// ">
             </div>
-            <!-- form-group -->
+            <!-- class="col-md-4" -->
+            <button class="btn btn-default col-md-1 col-md-pull-1" type="submit" value="Submit">Submit</button>
+          </div>
+          <!-- form-group -->
         </form>
         <!-- class='form-horizon' -->
 
-    </div>
-    <!-- class="container " -->
+      </div>
+      <!-- class="container " -->
 
   </body>
 
