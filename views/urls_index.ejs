@@ -13,47 +13,45 @@
 
       <div class="container">
         <br>
-        <% if (temp.userName) {%>
-          <% for(i in urls) { %>
-            <% if (urls[i].userID == temp.userKey) {  %>
-              <div class="row">
+        <% for(i in urls) { %>
+          <div class="row">
 
-                <div class="col-md-12 col-sm-12">
-                  <!-- Bootstrap form -->
-                  <form class="form-horizonal" action="/urls/<%= i %>/delete" method="POST">
-                    <div class="form-group">
-                      <div class="col-md-5 col-sm-6">
-                        <a href="<%= urls[i].url %>">
-                          <%= i%>
-                        </a> <span class="glyphicon glyphicon-arrow-right"></span>
-                        <%= urls[i].url %>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <div class="col-md-1 col-sm-1">
-                        <a href="/urls/<%= i %>">Edit</a>
-                        <!-- Route to urls_show -->
-                      </div>
-                      <div class="col-md-1 col-sm-2">
-
-                        <button class="btn btn-warning pull-right" type="submit" value="submit">
-                          Delete <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                      </div>
-
-                    </div>
-
-                  </form>
-                  <!-- End Bootstrap form -->
+            <div class="col-md-12 col-sm-12">
+              <!-- Bootstrap form -->
+              <form class="form-horizonal" action="/urls/<%= i %>/delete" method="POST">
+                <div class="form-group">
+                  <div class="col-md-5 col-sm-6">
+                    <a href="<%= urls[i].url %>">
+                      <%= i%>
+                    </a> <span class="glyphicon glyphicon-arrow-right"></span>
+                    <%= urls[i].url %>
+                  </div>
                 </div>
-                <!-- class="col-md-12" -->
 
-              </div>
-              <!-- class="row" -->
-              <% } %>
-                <% } %>
+                <% if (urls[i].userID == temp.userKey) {  %>
+                  <div class="form-group">
+                    <div class="col-md-1 col-sm-1">
+                      <a href="/urls/<%= i %>">Edit</a>
+                      <!-- Route to urls_show -->
+                    </div>
+                    <div class="col-md-1 col-sm-2">
+
+                      <button class="btn btn-warning pull-right" type="submit" value="submit">
+                        Delete <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+                    </div>
+
+                  </div>
                   <% } %>
+
+              </form>
+              <!-- End Bootstrap form -->
+            </div>
+            <!-- class="col-md-12" -->
+
+          </div>
+          <!-- class="row" -->
+          <% } %>
 
       </div>
       <!-- clase= "container" -->
