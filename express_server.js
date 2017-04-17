@@ -41,9 +41,13 @@ const users = {
 
 
 app.get('/', (req, resp) => {
-  resp.send(`Hello!`)
-    // console.log(req.cookies.user_id)
-  console.log(req.session.user_id)
+  let userKey = findUserKey('id', req.session.user_id)
+  if (userKey) {
+    let temp = tempObj('', '', req.session.user_id, 'index')
+    resp.redirect(`/urls`)
+    return
+  }
+  resp.redirect('/urls/login')
 })
 
 app.get("/urls.json", (req, resp) => {
@@ -64,12 +68,18 @@ app.get('/urls/login', (req, resp) => {
 
 //  route to the index page
 app.get('/urls', (req, resp) => {
-  renderUrls_index(req.session.user_id, resp)
+  let userKey = findUserKey('id', req.session.user_id)
+  if (userKey) {
+    renderUrls_index(req.session.user_id, resp)
+    return
+  }
+  resp.status(401).send(HTML_err('401', './login'));
 })
 
 // route to logout
 app.get('/urls/logout', (req, resp) => {
-  resp.clearCookie('user_id')
+  // resp.clearCookie('user_id')
+  req.session = null
   renderUrls_index('', resp)
 })
 
@@ -85,7 +95,23 @@ app.get('/urls/new', (req, resp) => {
 
 //route to each short url page
 app.get('/urls/:i', (req, resp) => {
+  let userKey = findUserKey('id', req.session.user_id)
+    // check user log-in
+  if (!userKey) {
+    resp.status(401).send(HTML_err('401', '/urls/login'));
+    return
+  }
+  // valid short url
   let shortURL = req.params.i
+  if (!urlDatabase[shortURL]) {
+    resp.status(404).send(HTML_err('404', '/urls'));
+    return
+  }
+  // check user owned url
+  if (urlDatabase[shortURL].userID !== userKey) {
+    resp.status(403).send(HTML_err('403', '/urls'));
+  }
+  // all good
   let longURL = urlDatabase[shortURL].url
   let userName = ''
   let userID = (req.session.user_id ? req.session.user_id : '')
@@ -95,7 +121,19 @@ app.get('/urls/:i', (req, resp) => {
 
 //route to the external long url
 app.get("/u/:shortURL", (req, resp) => {
-  resp.redirect(req.params.i)
+  // Validate short url
+  if (urlDatabase[req.params.shortURL]) {
+    resp.redirect(urlDatabase[req.params.shortURL].url)
+    return
+  }
+  let userKey = findUserKey('id', req.session.user_id)
+    // check user log-in
+  if (!userKey) {
+    resp.status(404).send(HTML_err('404', '/urls/login'));
+    return
+  }
+  // Invalid short url for logged in user
+  resp.status(404).send(HTML_err('404', '/urls'));
 })
 
 // ------Posts-------//
@@ -117,7 +155,6 @@ app.post('/urls/register', (req, resp) => {
       email: req.body.email,
       password: hashed_pwd
     }
-    console.log(users)
     req.session.user_id = id
     renderUrls_index(id, resp)
     return
@@ -136,7 +173,7 @@ app.post('/urls/login', (req, resp) => {
       return
     }
   }
-  resp.redirect(403, '/urls/login')
+  resp.redirect(401, '/urls/login')
 })
 
 //route from submitting new url
@@ -196,4 +233,18 @@ function tempObj(shortURL, longURL, userID, page) {
     userName = (userKey ? users[userKey].name : '')
   }
   return { shortURL, longURL, userKey, userName, page }
+}
+
+//Make HTML error message and link for user to go somewhere
+function HTML_err(code, dir) {
+  code = Number(code)
+  if (code === 401) {
+    return `Please <a href='${dir}''>log in</a>.`
+  }
+  if (code === 403) {
+    return `Sorry, can't find the url in your record. Return <a href='${dir}'>Home</a>.`
+  }
+  if (code === 404) {
+    return `Sorry, can't find this short url. Return <a href='${dir}'>Home</a>.`
+  }
 }

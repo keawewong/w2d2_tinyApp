@@ -11,7 +11,7 @@
   <%- include('partials/_header') %>
     <div class="container">
 
-      <h4 class="col-md-12">Short URL: <%= temp.shortURL%></h4>
+      <h4 class="col-md-12 col-sm-12">Short URL: <%= temp.shortURL%></h4>
 
       <!-- Bootstrap form -->
       <form class="form-horizonal" action="/urls/<%= temp.shortURL%>/update" method="POST">
