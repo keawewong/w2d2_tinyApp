@@ -110,6 +110,7 @@ app.get('/urls/:i', (req, resp) => {
   // check user owned url
   if (urlDatabase[shortURL].userID !== userKey) {
     resp.status(403).send(HTML_err('403', '/urls'));
+    return
   }
   // all good
   let longURL = urlDatabase[shortURL].url
